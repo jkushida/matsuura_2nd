@@ -1,0 +1,87 @@
+\documentclass[a4paper,twocolumn,10pt]{jarticle}
+
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage{bm}
+
+\pagestyle{empty}
+\usepackage[top=15truemm,bottom=15truemm,left=15truemm,right=15truemm]{geometry}
+
+
+
+\begin{document}
+\twocolumn[%
+\begin{center}
+{\Large\bf 複数車両同時最適化問題に対する\\ $\varepsilon$制約法における$\varepsilon$レベル制御法の改良}
+\par
+\medskip
+{\large 松浦　隆斗（1720189）
+\par
+\medskip
+知能工学科計算知能研究室
+\par
+指導：高濱徹行　教授
+　串田純一　准教授
+　原章　准教授
+}
+\end{center}
+\par
+\medskip
+\medskip
+]
+
+
+%卒業論文　要旨のフォーマット
+
+\section{はじめに}
+実問題として作成されたマツダベンチマーク問題\cite{マツダベンチマーク問題}に対し、多くの最適化手法が適用されている。本研究では、実問題の制約付き最適化問題であるマツダベンチマーク問題の車体総重量の最小化を対象にDEを用いることで最適化を行う。しかし、DEは制約なし最適化手法であるため、$\varepsilon$レベル比較を使用する$\varepsilon$制約法\cite{ε制約法}を適用した$\varepsilon$DEを用いて制約付き最適化問題の最適化を行う。
+
+$\varepsilon$制約法は、$\varepsilon$レベルをあらかじめ決定したパラメータによってスケジューリングするので、問題の制約式の改善の難易度が反映されていない。このことから本論文では、$\varepsilon$レベルの制御を個体群の動きに依存させるような制御をし、個体群と$\varepsilon$制約法の関連性を作り出すことで、$\varepsilon$レベルと個体群の進化度合いの両方を考慮しながら探索を行える最適化手法を提案する。また、$\varepsilon$レベルは個体群の制約逸脱度を利用し決定するため、$\varepsilon$レベルの制御で用いるパラメータ$cp$を使用せずに制御できることも示す。
+
+\section{提案手法}
+$\varepsilon$制約のスケジュールをあらかじめ決定せずに個体群の動きに合わしていくように、各世代における個体群の制約逸脱度の良い個体の上位$NP×s$番目の制約逸脱度を$\varepsilon$レベルに代入することで制御する。また、$\varepsilon$レベルが$0$に収束するように、${T}_0(0<{T}_0<{T}_{max})$世代以降は常に$0$となるようにする。以下のように世代$t$ごとで$\varepsilon$レベルを制御していく。
+\begin{eqnarray}
+\varepsilon(t)=
+\left\{
+\begin{array}{cc}
+    {\phi({\bm x}_α)} & \mbox{$0\leq t<{T}_0$} \\
+    {0} & \mbox{$t\geq{T}_0$}\\
+\end{array}
+\right.
+\label{提案手法}
+\end{eqnarray}
+ここで、${x}_α$は制約逸脱度が上位$NP×s$番目の個体$(α=NP×s)$とし、${T}_0$は${T}_{max}\times{r}(r\in[0,1])$世代とする。
+
+
+\section{実験結果}
+マツダベンチマーク問題に提案手法を適用し、最適化性能と従来手法との比較を分析する。評価回数の上限は30000回であり、ベースベクトルの選択方法はパレートbest戦略を用いた。パレートbest戦略を使用するのは、良い結果が得られたからである。従来手法と提案手法の探索結果を表\ref{tbl:パレートbest}に示す。
+\begin{table}[htbp]
+\begin{center}
+\caption{パレートbest戦略}
+\label{tbl:パレートbest}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+      & Average & Std & Min & Max & Median  \\ \hline
+従来手法 & 2.58395	& 0.00624 & 2.57212 & 2.60532 & 2.58270\\ \hline
+提案手法 & 2.58485 & 0.00389 & 2.57741 & 2.59080 & 2.58525\\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+従来手法との比較の結果、最適値の平均において、すべての戦略で同等の精度を得ることができた。これにより、パラメータ$cp$を減らすことできたといえる。また、21試行すべてにおいて実行可能解を得ることができたことから、提案手法によるプログラム変更の影響は少なく、安定性は保たれていると考える。
+
+
+\section{まとめ}
+実験結果から従来手法での最適解より良い結果は得ることはできなかったが、パラメータを一つ少なくした上で、従来手法と同等の結果を得ることができた。これは、探索性能の向上は実現できなかったが、アルゴリズムをシンプルにすることができ、今後の実問題に適用される際に実験効率向上になると考える。
+また、提案手法ではマツダベンチマーク問題に対して、問題なく最適解を探索することができたが、他の問題に対しても最適解を求める事ができるとは限らない。今後、他の実問題に対しても適用し実験することが必要であると考える。パラメータ$s$も同様であり、戦略ごとでも違う値を設定する必要があることから、問題ごとにも違う値を設定しなければならないと考える。
+
+\bibliography{btxsample}
+\bibliographystyle{junsrt}
+
+%欧文用	和文用	特徴
+%plain	jplain	参考文献をアルファベット順で出力する
+%unsrt	junsrt	参考文献を引用された順で出力する
+
+
+\end{document}
